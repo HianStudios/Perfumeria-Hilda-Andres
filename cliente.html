@@ -2,207 +2,156 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Perfumería</title>
 
 <style>
 :root{
-  --bg:#f8fafc;
-  --panel:#ffffff;
-  --card:#ffffff;
   --accent:#10b981;
   --accent2:#34d399;
+  --bg:#f1f5f9;
+  --card:#ffffff;
   --text:#0f172a;
   --muted:#64748b;
-  --border:#e2e8f0;
 }
 
 *{
   box-sizing:border-box;
-  transition: all .2s ease;
 }
 
 body{
   margin:0;
   font-family:'Segoe UI',system-ui;
-  background:linear-gradient(to bottom,#f8fafc,#eef2f7);
-  color:var(--text);
+  background:var(--bg);
 }
 
-/* LAYOUT */
+/* CONTENEDOR */
 .container{
-  display:flex;
-  gap:20px;
-  padding:20px;
-}
-
-.left{
-  width:65%;
-  padding:20px;
-  max-height:100vh;
-  overflow-y:auto;
-}
-
-.right{
-  width:35%;
-  position:sticky;
-  top:20px;
-  height:fit-content;
-  padding:20px;
-  background:#ffffffcc;
-  backdrop-filter: blur(10px);
-  border:1px solid var(--border);
-  border-radius:16px;
-}
-
-/* MOBILE */
-@media(max-width:900px){
-  .container{
-    flex-direction:column;
-    padding:10px;
-  }
-
-  .left,.right{
-    width:100%;
-    padding:15px;
-  }
-
-  .right{
-    position:relative;
-    top:auto;
-  }
+  padding:12px;
+  padding-bottom:120px; /* espacio para resumen fijo */
 }
 
 /* TITULOS */
 h2{
-  font-weight:600;
-  margin:25px 0 10px;
+  font-size:18px;
+  margin:20px 0 10px;
 }
 
 /* GRID */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:14px;
-}
-
-@media(max-width:500px){
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-  }
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
 }
 
 /* CARD */
 .card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:12px;
-  cursor:pointer;
-}
-
-.card:hover{
-  transform:translateY(-4px) scale(1.01);
-  box-shadow:0 8px 20px rgba(0,0,0,.08);
+  background:white;
+  border-radius:14px;
+  padding:10px;
+  border:1px solid #e2e8f0;
 }
 
 .card.active{
-  border:1px solid var(--accent);
-  box-shadow:0 0 0 2px rgba(16,185,129,.2);
+  border:2px solid var(--accent);
 }
 
 .card img{
   width:100%;
-  height:130px;
+  height:100px;
   object-fit:cover;
-  border-radius:12px;
+  border-radius:10px;
 }
 
 .card h4{
-  font-size:14px;
-  margin:8px 0 4px;
+  font-size:13px;
+  margin:6px 0;
 }
 
 .price{
-  font-size:14px;
+  font-size:13px;
   color:var(--accent);
   font-weight:600;
 }
 
 /* BOTONES */
 .btn{
-  padding:12px;
-  border-radius:12px;
+  width:100%;
+  padding:14px;
   border:none;
-  cursor:pointer;
+  border-radius:12px;
   font-size:14px;
 }
 
 .btn-main{
-  width:100%;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:white;
   font-weight:600;
-  box-shadow:0 6px 16px rgba(16,185,129,.2);
 }
 
 .btn-option{
-  background:#f1f5f9;
-  border:1px solid var(--border);
-  color:#0f172a;
-  margin-right:10px;
-  border-radius:999px;
+  flex:1;
+  background:white;
+  border:1px solid #e2e8f0;
 }
 
 .btn-option.active{
-  border:1px solid var(--accent);
+  border:2px solid var(--accent);
   background:#ecfdf5;
 }
 
 /* INPUT */
 input{
   width:100%;
-  padding:13px;
+  padding:14px;
   border-radius:12px;
-  border:1px solid var(--border);
-  margin:6px 0;
-  font-size:14px;
+  border:1px solid #e2e8f0;
+  margin:8px 0;
 }
 
-input:focus{
-  outline:none;
-  border:1px solid var(--accent);
+/* DURACION */
+.row{
+  display:flex;
+  gap:10px;
 }
 
-/* RESUMEN */
+/* RESUMEN FIJO ABAJO */
+.right{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:white;
+  padding:12px;
+  border-top:1px solid #e2e8f0;
+  box-shadow:0 -5px 20px rgba(0,0,0,0.08);
+}
+
+.resumen-scroll{
+  max-height:120px;
+  overflow-y:auto;
+}
+
 .resumen-item{
-  background:#f8fafc;
-  border:1px solid var(--border);
-  padding:10px;
-  border-radius:12px;
-  margin-bottom:8px;
-  font-size:13px;
+  font-size:12px;
+  margin-bottom:6px;
 }
 
 .total{
-  font-size:22px;
-  font-weight:700;
+  font-size:18px;
+  font-weight:bold;
   color:var(--accent);
+  margin:5px 0;
 }
 
-/* VOLVER */
+/* BOTON VOLVER */
 .volver{
-  margin-bottom:20px;
-  padding:10px 18px;
+  width:100%;
+  padding:12px;
+  margin-bottom:10px;
+  border:none;
   border-radius:10px;
-  border:1px solid var(--border);
-  background:white;
-  cursor:pointer;
-}
-
-/* NOTE */
-.note{
-  font-size:12px;
-  color:var(--muted);
+  background:#e2e8f0;
 }
 </style>
 </head>
@@ -211,46 +160,38 @@ input:focus{
 
 <div class="container">
 
-<div class="left">
+<button onclick="volver()" class="volver">← Volver</button>
 
-<button onclick="volver()" class="volver">
-← Volver a tienda
-</button>
-
-<h2>Selecciona Envase</h2>
+<h2>Envase</h2>
 <div class="grid" id="envases"></div>
 
-<h2>Selecciona Esencia</h2>
+<h2>Esencia</h2>
 <div class="grid" id="esencias"></div>
 
 <h2>Duración</h2>
-<div style="display:flex;gap:10px;margin-bottom:10px;">
+<div class="row">
 <button class="btn btn-option" onclick="setDuracionUI(this,'moderada')">Moderada</button>
 <button class="btn btn-option" onclick="setDuracionUI(this,'alta')">Alta</button>
 </div>
 
 <h2>Datos</h2>
-<input id="cliente" placeholder="Tu nombre">
+<input id="cliente" placeholder="Nombre">
 <input id="telefono" placeholder="Teléfono">
 
-<button class="btn btn-main" onclick="agregar()">Añadir al pedido</button>
+<button class="btn btn-main" onclick="agregar()">Añadir</button>
 
 </div>
 
+<!-- RESUMEN -->
 <div class="right">
 
-<h2>Resumen</h2>
-<p class="note">El costo del envío es aparte</p>
-
-<div id="lista"></div>
+<div class="resumen-scroll" id="lista"></div>
 
 <div class="total" id="totalHTML">Total: $0</div>
 
-<button class="btn btn-main" onclick="confirmar()">Confirmar pedido</button>
+<button class="btn btn-main" onclick="confirmar()">Confirmar</button>
 
 <div id="whatsapp"></div>
-
-</div>
 
 </div>
 
@@ -290,7 +231,6 @@ envases.innerHTML+=`
 <div class="card" onclick="envSel(this,${JSON.stringify(d).replace(/"/g,'&quot;')})">
 <img src="${d.imagen}">
 <h4>${d.nombre}</h4>
-<p>${d.categoria}</p>
 <div class="price">$${d.precio}</div>
 </div>`;
 });
@@ -318,19 +258,11 @@ return Number(envase.precio||0)+(duracion==="alta"?2:1);
 }
 
 function agregar(){
-
 if(!envase||!esencia){alert("Selecciona");return;}
 
 let precio=calcularPrecio();
 
-carrito.push({
-envase:envase.nombre,
-esencia,
-duracion,
-precio,
-cantidad:1
-});
-
+carrito.push({envase:envase.nombre,esencia,duracion,precio});
 render();
 }
 
@@ -343,9 +275,7 @@ total+=p.precio;
 
 lista.innerHTML+=`
 <div class="resumen-item">
-<b>${p.envase}</b> - ${p.esencia}<br>
-${p.duracion}<br>
-<span style="color:#10b981">$${p.precio}</span>
+${p.envase} - ${p.esencia} ($${p.precio})
 </div>`;
 });
 
@@ -355,7 +285,7 @@ totalHTML.innerText="Total: $"+total;
 async function confirmar(){
 
 if(carrito.length===0){alert("Agrega");return;}
-if(!cliente.value || !telefono.value){alert("Completa tus datos");return;}
+if(!cliente.value || !telefono.value){alert("Completa");return;}
 
 let total = carrito.reduce((a,b)=>a+b.precio,0);
 
@@ -368,19 +298,13 @@ estado:"pendiente",
 fecha:new Date().toISOString()
 });
 
-let mensaje = `Pedido\nNombre: ${cliente.value}\nNumero: ${telefono.value}\n\n`;
-
-carrito.forEach(p=>{
-mensaje += `Envase: ${p.envase}\nEsencia: ${p.esencia}\nDuración: ${p.duracion}\nPrecio: $${p.precio}\n--------------------\n`;
-});
-
-mensaje += `\nTotal: $${total}`;
+let mensaje = `Pedido\n${cliente.value}\n${telefono.value}\nTotal: $${total}`;
 
 let url = "https://wa.me/593969518798?text=" + encodeURIComponent(mensaje);
 
 whatsapp.innerHTML = `
 <a href="${url}" target="_blank">
-<button class="btn btn-main">Enviar por WhatsApp</button>
+<button class="btn btn-main">WhatsApp</button>
 </a>`;
 }
 
