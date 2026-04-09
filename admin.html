@@ -142,6 +142,7 @@ function mostrar(tipo){
           <option>100ml</option>
         </select>
         <input id="imgEnvase" placeholder="URL Imagen">
+        <input id="precioEnvase" type="number" placeholder="Precio">
         <button class="save" onclick="crearEnvase()">Guardar</button>
       </div>
       <div id="lista"></div>
@@ -153,9 +154,7 @@ function mostrar(tipo){
     cont.innerHTML = `
       <div class="card">
         <h2>Crear / Editar Política</h2>
-
         <input id="titulo" placeholder="Título" style="font-size:20px;font-weight:bold;">
-
         <div class="toolbar">
           <select onchange="format('fontName', this.value)">
             <option value="Arial">Arial</option>
@@ -170,28 +169,21 @@ function mostrar(tipo){
           </select>
 
           <input type="color" onchange="format('foreColor', this.value)">
-
           <button onclick="format('bold')">B</button>
           <button onclick="format('italic')">I</button>
           <button onclick="format('underline')">U</button>
-
           <button onclick="format('justifyLeft')">⬅</button>
           <button onclick="format('justifyCenter')">⬍</button>
           <button onclick="format('justifyRight')">➡</button>
           <button onclick="format('justifyFull')">☰</button>
-
           <button onclick="format('insertUnorderedList')">• Lista</button>
           <button onclick="insertarImagen()">🖼</button>
-
           <input type="number" id="imgWidth" placeholder="px" style="width:60px;">
           <button onclick="cambiarTamanoImagen()">OK</button>
         </div>
-
         <div id="editor" class="editor" contenteditable="true"></div>
-
         <button class="save" onclick="guardarPolitica()">Guardar</button>
       </div>
-
       <div id="lista"></div>
     `;
     cargarPoliticas();
@@ -209,7 +201,6 @@ function insertarImagen(){
     const img = document.createElement("img");
     img.src = url;
     img.style.width = "150px";
-    img.style.resize = "both";
     img.style.display = "block";
     img.style.margin = "10px 0";
     document.getElementById("editor").appendChild(img);
@@ -220,7 +211,6 @@ function cambiarTamanoImagen(){
   const width = document.getElementById("imgWidth").value;
   const sel = window.getSelection();
   const node = sel.anchorNode.parentNode;
-
   if(node.tagName === "IMG"){
     node.style.width = width + "px";
   }
@@ -237,7 +227,6 @@ async function crearEsencia(){
 async function cargarEsencias(){
   lista.innerHTML="";
   const snap = await db.collection("esencias").get();
-
   snap.forEach(doc=>{
     const d = doc.data();
     lista.innerHTML+=`
@@ -268,10 +257,16 @@ async function eliminarEsencia(id){
 
 /* ================== ENVASES ================== */
 async function crearEnvase(){
+  const nombre = nombreEnvase.value;
+  const categoriaVal = categoria.value;
+  const imagenVal = imgEnvase.value;
+  const precioVal = parseFloat(precioEnvase.value) || 0;
+
   await db.collection("envases").add({
-    nombre:nombreEnvase.value,
-    categoria:categoria.value,
-    imagen:imgEnvase.value
+    nombre: nombre,
+    categoria: categoriaVal,
+    imagen: imagenVal,
+    precio: precioVal
   });
   cargarEnvases();
 }
@@ -279,29 +274,31 @@ async function crearEnvase(){
 async function cargarEnvases(){
   lista.innerHTML="";
   const snap = await db.collection("envases").get();
-
   snap.forEach(doc=>{
     const d = doc.data();
     lista.innerHTML+=`
     <div class="card">
       ${d.nombre} (${d.categoria})<br>
+      Precio: $${d.precio}<br>
       <img src="${d.imagen}" width="100"><br>
-      <button onclick="editarEnvase('${doc.id}','${d.nombre}','${d.categoria}','${d.imagen}')">Editar</button>
+      <button onclick="editarEnvase('${doc.id}','${d.nombre}','${d.categoria}','${d.imagen}', ${d.precio})">Editar</button>
       <button onclick="eliminarEnvase('${doc.id}')">Eliminar</button>
     </div>`;
   });
 }
 
-async function editarEnvase(id,n,c,i){
-  const nn = prompt("Nombre:",n);
-  const cc = prompt("Categoria:",c);
-  const ii = prompt("Imagen:",i);
+async function editarEnvase(id,n,c,i,p){
+  const nn = prompt("Nombre:", n);
+  const cc = prompt("Categoria:", c);
+  const ii = prompt("Imagen:", i);
+  const pp = parseFloat(prompt("Precio:", p)) || 0;
 
   if(nn && cc && ii){
     await db.collection("envases").doc(id).update({
-      nombre:nn,
-      categoria:cc,
-      imagen:ii
+      nombre: nn,
+      categoria: cc,
+      imagen: ii,
+      precio: pp
     });
     cargarEnvases();
   }
@@ -316,18 +313,15 @@ async function eliminarEnvase(id){
 
 /* ================== POLITICAS ================== */
 let editId = null;
-
 async function guardarPolitica(){
   const titulo = document.getElementById("titulo").value;
   const contenido = document.getElementById("editor").innerHTML;
-
   if(editId){
     await db.collection("politicas").doc(editId).update({titulo,contenido});
     editId=null;
   }else{
     await db.collection("politicas").add({titulo,contenido});
   }
-
   document.getElementById("editor").innerHTML="";
   cargarPoliticas();
 }
@@ -335,15 +329,12 @@ async function guardarPolitica(){
 async function cargarPoliticas(){
   lista.innerHTML="";
   const snap = await db.collection("politicas").get();
-
   snap.forEach(doc=>{
     const d = doc.data();
-
     lista.innerHTML+=`
     <div class="card">
       <h3>${d.titulo}</h3>
-      ${d.contenido}
-      <br>
+      ${d.contenido}<br>
       <button onclick="editarPolitica('${doc.id}')">Editar</button>
       <button onclick="eliminarPolitica('${doc.id}')">Eliminar</button>
     </div>`;
@@ -353,10 +344,8 @@ async function cargarPoliticas(){
 async function editarPolitica(id){
   const doc = await db.collection("politicas").doc(id).get();
   const d = doc.data();
-
   document.getElementById("titulo").value = d.titulo;
   document.getElementById("editor").innerHTML = d.contenido;
-
   editId = id;
 }
 
