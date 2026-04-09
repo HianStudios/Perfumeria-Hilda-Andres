@@ -28,7 +28,7 @@ body{
 /* LAYOUT */
 .container{
   display:flex;
-  flex-wrap:nowrap;
+  flex-wrap:wrap;
 }
 
 .left{
@@ -46,6 +46,7 @@ body{
   background:#ffffffcc;
   backdrop-filter: blur(10px);
   border-left:1px solid var(--border);
+  z-index:1;
 }
 
 /* TITULOS */
@@ -190,25 +191,20 @@ input:focus{
   color:var(--muted);
 }
 
-/* RESPONSIVE TOTAL */
-@media (max-width: 1024px){
+/* RESPONSIVE */
+@media (max-width:1024px){
   .container{
     flex-direction:column;
   }
 
-  .left{
-    width:100%;
-    padding:20px;
-  }
-
-  .right{
+  .left, .right{
     width:100%;
     position:relative;
     border-left:none;
     border-top:1px solid var(--border);
-    height:auto;
     padding:20px;
-    margin-top:20px;
+    margin-top:0;
+    height:auto;
   }
 
   .grid{
@@ -225,37 +221,14 @@ input:focus{
   }
 }
 
-@media (max-width: 768px){
-  h2{
-    font-size:18px;
-  }
-
-  input{
-    font-size:15px;
-    padding:12px;
-  }
-
-  .card img{
-    height:120px;
-  }
-
-  .card h4{
-    font-size:15px;
-  }
-
-  .resumen-item{
-    padding:10px;
-    font-size:14px;
-  }
-
-  .total{
-    font-size:20px;
-  }
-
-  .btn, .btn-main, .btn-option, .volver{
-    font-size:17px;
-    padding:14px;
-  }
+@media (max-width:768px){
+  h2{font-size:18px;}
+  input{font-size:15px; padding:12px;}
+  .card img{height:120px;}
+  .card h4{font-size:15px;}
+  .resumen-item{padding:10px; font-size:14px;}
+  .total{font-size:20px;}
+  .btn, .btn-main, .btn-option, .volver{font-size:17px; padding:14px;}
 }
 </style>
 </head>
@@ -265,7 +238,6 @@ input:focus{
 <div class="container">
 
 <div class="left">
-
 <button onclick="volver()" class="volver">
 ← Volver a tienda
 </button>
@@ -285,22 +257,15 @@ input:focus{
 <input id="telefono" placeholder="Teléfono">
 
 <button class="btn btn-main" onclick="agregar()">Añadir al pedido</button>
-
 </div>
 
 <div class="right">
-
 <h2>Resumen</h2>
 <p class="note">El costo del envío es aparte</p>
-
 <div id="lista"></div>
-
 <div class="total" id="totalHTML">Total: $0</div>
-
 <button class="btn btn-main" onclick="confirmar()">Confirmar pedido</button>
-
 <div id="whatsapp"></div>
-
 </div>
 
 </div>
