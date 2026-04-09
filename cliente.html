@@ -27,44 +27,156 @@ body{
 
 /* LAYOUT */
 .container{display:flex;}
-.left{width:70%;padding:40px;}
-.right{width:30%;position:fixed;right:0;top:0;height:100%;padding:30px;background:#ffffffcc;backdrop-filter: blur(10px);border-left:1px solid var(--border);}
+
+.left{
+  width:70%;
+  padding:40px;
+}
+
+.right{
+  width:30%;
+  position:fixed;
+  right:0;
+  top:0;
+  height:100%;
+  padding:30px;
+  background:#ffffffcc;
+  backdrop-filter: blur(10px);
+  border-left:1px solid var(--border);
+}
 
 /* TITULOS */
-h2{font-weight:600;margin:30px 0 12px;}
+h2{
+  font-weight:600;
+  margin:30px 0 12px;
+}
 
 /* GRID */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:18px;
+}
 
 /* CARD */
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;transition:.25s;position:relative;}
-.card:hover{transform:translateY(-5px);box-shadow:0 10px 25px rgba(0,0,0,.08);}
-.card.active{border:1px solid var(--accent);box-shadow:0 0 0 2px rgba(16,185,129,.2);}
-.card img{width:100%;height:140px;object-fit:cover;border-radius:10px;}
-.card h4{margin:10px 0 5px;}
-.price{color:var(--accent);font-weight:600;}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  cursor:pointer;
+  transition:.25s;
+  position:relative;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.card.active{
+  border:1px solid var(--accent);
+  box-shadow:0 0 0 2px rgba(16,185,129,.2);
+}
+
+.card img{
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.card h4{
+  margin:10px 0 5px;
+}
+
+.price{
+  color:var(--accent);
+  font-weight:600;
+}
 
 /* BOTONES */
-.btn{padding:13px;border-radius:10px;border:none;cursor:pointer;}
-.btn-main{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-weight:600;box-shadow:0 8px 20px rgba(16,185,129,.2);}
-.btn-main:hover{transform:translateY(-2px);}
-.btn-option{background:#f1f5f9;border:1px solid var(--border);color:#0f172a;margin-right:10px;}
-.btn-option.active{border:1px solid var(--accent);background:#ecfdf5;}
+.btn{
+  padding:13px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+}
+
+.btn-main{
+  width:100%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:white;
+  font-weight:600;
+  box-shadow:0 8px 20px rgba(16,185,129,.2);
+}
+
+.btn-main:hover{
+  transform:translateY(-2px);
+}
+
+.btn-option{
+  background:#f1f5f9;
+  border:1px solid var(--border);
+  color:#0f172a;
+  margin-right:10px;
+}
+
+.btn-option.active{
+  border:1px solid var(--accent);
+  background:#ecfdf5;
+}
 
 /* INPUT */
-input{width:100%;padding:14px;border-radius:10px;border:1px solid var(--border);background:white;color:#0f172a;margin:8px 0;}
-input:focus{outline:none;border:1px solid var(--accent);}
+input{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:white;
+  color:#0f172a;
+  margin:8px 0;
+}
+
+input:focus{
+  outline:none;
+  border:1px solid var(--accent);
+}
 
 /* RESUMEN */
-.resumen-item{background:#f8fafc;border:1px solid var(--border);padding:12px;border-radius:10px;margin-bottom:10px;}
-.total{font-size:24px;font-weight:700;color:var(--accent);}
+.resumen-item{
+  background:#f8fafc;
+  border:1px solid var(--border);
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+.total{
+  font-size:24px;
+  font-weight:700;
+  color:var(--accent);
+}
 
 /* BOTON VOLVER */
-.volver{margin-bottom:20px;padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:white;cursor:pointer;}
-.volver:hover{background:#f1f5f9;}
+.volver{
+  margin-bottom:20px;
+  padding:10px 18px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:white;
+  cursor:pointer;
+}
+
+.volver:hover{
+  background:#f1f5f9;
+}
 
 /* NOTA */
-.note{font-size:12px;color:var(--muted);}
+.note{
+  font-size:12px;
+  color:var(--muted);
+}
 </style>
 </head>
 
@@ -74,7 +186,9 @@ input:focus{outline:none;border:1px solid var(--accent);}
 
 <div class="left">
 
-<button onclick="volver()" class="volver">← Volver a tienda</button>
+<button onclick="volver()" class="volver">
+← Volver a tienda
+</button>
 
 <h2>Selecciona Envase</h2>
 <div class="grid" id="envases"></div>
@@ -126,20 +240,14 @@ let carrito=[];
 
 /* UI */
 function setActiveCard(container,el){
-  document.querySelectorAll('#'+container+' .card').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
+document.querySelectorAll('#'+container+' .card').forEach(c=>c.classList.remove('active'));
+el.classList.add('active');
 }
 
 function setDuracionUI(btn,val){
-  duracion=val;
-  document.querySelectorAll('.btn-option').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-
-  // Actualizar precios en carrito si hay envases con duración alta
-  carrito.forEach(item=>{
-    item.precio = Number(item.envasePrecioOriginal || item.precio) + (item.duracion==="alta"?2:1);
-  });
-  render();
+duracion=val;
+document.querySelectorAll('.btn-option').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
 }
 
 /* LOAD */
@@ -156,8 +264,7 @@ envases.innerHTML+=`
 <img src="${d.imagen}">
 <h4>${d.nombre}</h4>
 <p>${d.categoria}</p>
-<input type="number" value="${d.precio}" min="0" style="width:80px;margin-top:5px;" 
-       onchange="updatePrecio(this, '${d.nombre}')">
+<div class="price">$${d.precio}</div>
 </div>`;
 });
 
@@ -175,72 +282,56 @@ esencias.innerHTML+=`
 
 cargarDatos();
 
-function envSel(el,d){
-  envase=d;
-  envase.envasePrecioOriginal = Number(d.precio); // Guardar precio original
-  setActiveCard('envases',el);
-}
+function envSel(el,d){envase=d;setActiveCard('envases',el);}
 function esSel(el,n){esencia=n;setActiveCard('esencias',el);}
 
-// Actualizar precio editable
-function updatePrecio(input, nombreEnvase){
-  const nuevoPrecio = Number(input.value);
-
-  // Si el envase seleccionado coincide, actualizar
-  if(envase && envase.nombre === nombreEnvase){
-    envase.precio = nuevoPrecio;
-    envase.envasePrecioOriginal = nuevoPrecio;
-  }
-
-  // Actualizar los ítems en carrito que coincidan
-  carrito.forEach(item=>{
-    if(item.envase === nombreEnvase){
-      item.precio = nuevoPrecio + (item.duracion==="alta"?2:1);
-      item.envasePrecioOriginal = nuevoPrecio;
-    }
-  });
-
-  render();
-}
-
 function calcularPrecio(){
-  if(!envase) return 0;
-  return Number(envase.precio||0) + (duracion==="alta"?2:1);
+if(!envase)return 0;
+return Number(envase.precio||0)+(duracion==="alta"?2:1);
 }
 
 function agregar(){
-  if(!envase||!esencia){alert("Selecciona");return;}
-  let precio = calcularPrecio();
-  carrito.push({
-    envase: envase.nombre,
-    esencia,
-    duracion,
-    precio,
-    envasePrecioOriginal: Number(envase.precio||0),
-    cantidad: 1
-  });
-  render();
+
+if(!envase||!esencia){alert("Selecciona");return;}
+
+let precio=calcularPrecio();
+
+carrito.push({
+envase:envase.nombre,
+esencia,
+duracion,
+precio,
+cantidad:1
+});
+
+render();
 }
 
 function render(){
-  lista.innerHTML="";
-  let total=0;
+lista.innerHTML="";
+let total=0;
 
-  carrito.forEach(p=>{
-    total+=p.precio;
-    lista.innerHTML+=`
-    <div class="resumen-item">
-      <b>${p.envase}</b> - ${p.esencia}<br>
-      ${p.duracion}<br>
-      <span style="color:#10b981">$${p.precio}</span>
-    </div>`;
-  });
+carrito.forEach(p=>{
+total+=p.precio;
 
-  totalHTML.innerText="Total: $"+total;
+lista.innerHTML+=`
+<div class="resumen-item">
+<b>${p.envase}</b> - ${p.esencia}<br>
+${p.duracion}<br>
+<span style="color:#10b981">$${p.precio}</span>
+</div>`;
+});
+
+totalHTML.innerText="Total: $"+total;
 }
 
 async function confirmar(){
-  if(carrito.length===0){alert("Agrega");return;}
+
+  if(carrito.length===0){
+    alert("Agrega");
+    return;
+  }
+
   let total = carrito.reduce((a,b)=>a+b.precio,0);
 
   await db.collection("pedidos").add({
@@ -252,21 +343,32 @@ async function confirmar(){
     fecha:new Date().toISOString()
   });
 
-  let mensaje = `Pedido%0ANombre: ${cliente.value}%0ANumero: ${telefono.value}%0A%0A`;
+  // Construir mensaje detallado
+  let mensaje = `Pedido%0A`;
+  mensaje += `Nombre: ${cliente.value}%0A`;
+  mensaje += `Numero: ${telefono.value}%0A%0A`;
+
   carrito.forEach(p=>{
-    mensaje += `Envase: ${p.envase}%0AEsencia: ${p.esencia}%0ADuración: ${p.duracion}%0APrecio: $${p.precio}%0A--------------------%0A`;
+    mensaje += `Envase: ${p.envase}%0A`;
+    mensaje += `Esencia: ${p.esencia}%0A`;
+    mensaje += `Duración: ${p.duracion}%0A`;
+    mensaje += `Precio: $${p.precio}%0A`;
+    mensaje += `--------------------%0A`;
   });
+
   mensaje += `%0ATotal: $${total}`;
+
   whatsapp.innerHTML = `
   <a href="https://wa.me/593969518798?text=${mensaje}" target="_blank">
     <button class="btn btn-main">Enviar por WhatsApp</button>
   </a>`;
 }
 
-whatsapp.innerHTML = `
-<a href="https://wa.me/593969518798?text=Pedido $0" target="_blank">
+whatsapp.innerHTML=`
+<a href="https://wa.me/593969518798?text=Pedido $${total}" target="_blank">
 <button class="btn btn-main">Ir a WhatsApp</button>
 </a>`;
+
 
 function volver(){
   window.location.href = "index.html";
