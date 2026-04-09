@@ -161,6 +161,78 @@ body{
   background:var(--soft);
   border-top:1px solid var(--border);
 }
+
+/* Optimización móvil sin cambiar links */
+@media (max-width: 768px) {
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px 20px;
+    gap: 10px;
+  }
+
+  .nav button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero {
+    flex-direction: column;
+    padding: 40px 20px;
+    gap: 30px;
+    text-align: center;
+  }
+
+  .hero img {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .hero-text h1 {
+    font-size: 32px;
+  }
+
+  .hero-text p {
+    font-size: 15px;
+  }
+
+  .btn-main {
+    width: 100%;
+    padding: 12px 0;
+    font-size: 16px;
+  }
+
+  .section {
+    padding: 50px 20px;
+  }
+
+  .section h2 {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .card img {
+    height: 150px;
+  }
+
+  .cta {
+    padding: 50px 20px;
+  }
+
+  .cta h2 {
+    font-size: 28px;
+  }
+
+  .cta p {
+    font-size: 15px;
+  }
+}
 </style>
 </head>
 
