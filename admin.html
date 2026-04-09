@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Admin Pro</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  display:flex;
+  background:#0f172a;
+  color:white;
+}
+
+.sidebar{
+  width:220px;
+  background:#020617;
+  height:100vh;
+  padding:20px;
+}
+
+.sidebar button{
+  width:100%;
+  margin:10px 0;
+  padding:10px;
+  background:#1e293b;
+  border:none;
+  color:white;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.main{
+  flex:1;
+  padding:20px;
+}
+
+.card{
+  background:#1e293b;
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
+}
+
+input, select{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border:none;
+  border-radius:5px;
+}
+
+button{
+  margin:5px;
+  padding:6px 10px;
+  cursor:pointer;
+}
+
+button.save{
+  background:#00c896;
+}
+
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  background:#0f172a;
+  padding:10px;
+  border-radius:8px;
+  margin:10px 0;
+}
+
+.toolbar button, .toolbar select, .toolbar input{
+  background:#1e293b;
+  color:white;
+  border:none;
+  padding:5px;
+  border-radius:5px;
+}
+
+.editor{
+  background:white;
+  color:black;
+  padding:15px;
+  min-height:200px;
+  border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <button onclick="mostrar('esencias')">🌸 Esencias</button>
+  <button onclick="mostrar('envases')">🧴 Envases</button>
+  <button onclick="mostrar('politicas')">📄 Políticas</button>
+  <button onclick="logout()">🚪 Cerrar sesión</button>
+</div>
+
+<div class="main" id="contenido"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyClkqdEQiTeSdQqjdqbQ4nxTrXbuf9_h-0",
+  authDomain: "perfumeria-app.firebaseapp.com",
+  projectId: "perfumeria-app"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* ================== CAMBIAR SECCION ================== */
+function mostrar(tipo){
+  const cont = document.getElementById("contenido");
+
+  if(tipo === "esencias"){
+    cont.innerHTML = `
+      <div class="card">
+        <h2>Crear Esencia</h2>
+        <input id="nombreEsencia" placeholder="Nombre">
+        <input id="imgEsencia" placeholder="URL Imagen">
+        <button class="save" onclick="crearEsencia()">Guardar</button>
+      </div>
+      <div id="lista"></div>
+    `;
+    cargarEsencias();
+  }
+
+  if(tipo === "envases"){
+    cont.innerHTML = `
+      <div class="card">
+        <h2>Crear Envase</h2>
+        <input id="nombreEnvase" placeholder="Nombre">
+        <select id="categoria">
+          <option>30ml</option>
+          <option>50ml</option>
+          <option>100ml</option>
+        </select>
+        <input id="imgEnvase" placeholder="URL Imagen">
+        <button class="save" onclick="crearEnvase()">Guardar</button>
+      </div>
+      <div id="lista"></div>
+    `;
+    cargarEnvases();
+  }
+
+  if(tipo === "politicas"){
+    cont.innerHTML = `
+      <div class="card">
+        <h2>Crear / Editar Política</h2>
+
+        <input id="titulo" placeholder="Título" style="font-size:20px;font-weight:bold;">
+
+        <div class="toolbar">
+          <select onchange="format('fontName', this.value)">
+            <option value="Arial">Arial</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Times New Roman">Times</option>
+          </select>
+
+          <select onchange="format('fontSize', this.value)">
+            <option value="3">Normal</option>
+            <option value="4">Medio</option>
+            <option value="5">Grande</option>
+          </select>
+
+          <input type="color" onchange="format('foreColor', this.value)">
+
+          <button onclick="format('bold')">B</button>
+          <button onclick="format('italic')">I</button>
+          <button onclick="format('underline')">U</button>
+
+          <button onclick="format('justifyLeft')">⬅</button>
+          <button onclick="format('justifyCenter')">⬍</button>
+          <button onclick="format('justifyRight')">➡</button>
+          <button onclick="format('justifyFull')">☰</button>
+
+          <button onclick="format('insertUnorderedList')">• Lista</button>
+          <button onclick="insertarImagen()">🖼</button>
+
+          <input type="number" id="imgWidth" placeholder="px" style="width:60px;">
+          <button onclick="cambiarTamanoImagen()">OK</button>
+        </div>
+
+        <div id="editor" class="editor" contenteditable="true"></div>
+
+        <button class="save" onclick="guardarPolitica()">Guardar</button>
+      </div>
+
+      <div id="lista"></div>
+    `;
+    cargarPoliticas();
+  }
+}
+
+/* ================== EDITOR ================== */
+function format(cmd, val=null){
+  document.execCommand(cmd,false,val);
+}
+
+function insertarImagen(){
+  const url = prompt("URL imagen:");
+  if(url){
+    const img = document.createElement("img");
+    img.src = url;
+    img.style.width = "150px";
+    img.style.resize = "both";
+    img.style.display = "block";
+    img.style.margin = "10px 0";
+    document.getElementById("editor").appendChild(img);
+  }
+}
+
+function cambiarTamanoImagen(){
+  const width = document.getElementById("imgWidth").value;
+  const sel = window.getSelection();
+  const node = sel.anchorNode.parentNode;
+
+  if(node.tagName === "IMG"){
+    node.style.width = width + "px";
+  }
+}
+
+/* ================== ESENCIAS ================== */
+async function crearEsencia(){
+  const nombre = nombreEsencia.value;
+  const imagen = imgEsencia.value;
+  await db.collection("esencias").add({nombre,imagen});
+  cargarEsencias();
+}
+
+async function cargarEsencias(){
+  lista.innerHTML="";
+  const snap = await db.collection("esencias").get();
+
+  snap.forEach(doc=>{
+    const d = doc.data();
+    lista.innerHTML+=`
+    <div class="card">
+      ${d.nombre}<br>
+      <img src="${d.imagen}" width="100"><br>
+      <button onclick="editarEsencia('${doc.id}','${d.nombre}','${d.imagen}')">Editar</button>
+      <button onclick="eliminarEsencia('${doc.id}')">Eliminar</button>
+    </div>`;
+  });
+}
+
+async function editarEsencia(id,nombre,imagen){
+  const n = prompt("Nombre:",nombre);
+  const i = prompt("Imagen:",imagen);
+  if(n && i){
+    await db.collection("esencias").doc(id).update({nombre:n,imagen:i});
+    cargarEsencias();
+  }
+}
+
+async function eliminarEsencia(id){
+  if(confirm("Eliminar?")){
+    await db.collection("esencias").doc(id).delete();
+    cargarEsencias();
+  }
+}
+
+/* ================== ENVASES ================== */
+async function crearEnvase(){
+  await db.collection("envases").add({
+    nombre:nombreEnvase.value,
+    categoria:categoria.value,
+    imagen:imgEnvase.value
+  });
+  cargarEnvases();
+}
+
+async function cargarEnvases(){
+  lista.innerHTML="";
+  const snap = await db.collection("envases").get();
+
+  snap.forEach(doc=>{
+    const d = doc.data();
+    lista.innerHTML+=`
+    <div class="card">
+      ${d.nombre} (${d.categoria})<br>
+      <img src="${d.imagen}" width="100"><br>
+      <button onclick="editarEnvase('${doc.id}','${d.nombre}','${d.categoria}','${d.imagen}')">Editar</button>
+      <button onclick="eliminarEnvase('${doc.id}')">Eliminar</button>
+    </div>`;
+  });
+}
+
+async function editarEnvase(id,n,c,i){
+  const nn = prompt("Nombre:",n);
+  const cc = prompt("Categoria:",c);
+  const ii = prompt("Imagen:",i);
+
+  if(nn && cc && ii){
+    await db.collection("envases").doc(id).update({
+      nombre:nn,
+      categoria:cc,
+      imagen:ii
+    });
+    cargarEnvases();
+  }
+}
+
+async function eliminarEnvase(id){
+  if(confirm("Eliminar?")){
+    await db.collection("envases").doc(id).delete();
+    cargarEnvases();
+  }
+}
+
+/* ================== POLITICAS ================== */
+let editId = null;
+
+async function guardarPolitica(){
+  const titulo = document.getElementById("titulo").value;
+  const contenido = document.getElementById("editor").innerHTML;
+
+  if(editId){
+    await db.collection("politicas").doc(editId).update({titulo,contenido});
+    editId=null;
+  }else{
+    await db.collection("politicas").add({titulo,contenido});
+  }
+
+  document.getElementById("editor").innerHTML="";
+  cargarPoliticas();
+}
+
+async function cargarPoliticas(){
+  lista.innerHTML="";
+  const snap = await db.collection("politicas").get();
+
+  snap.forEach(doc=>{
+    const d = doc.data();
+
+    lista.innerHTML+=`
+    <div class="card">
+      <h3>${d.titulo}</h3>
+      ${d.contenido}
+      <br>
+      <button onclick="editarPolitica('${doc.id}')">Editar</button>
+      <button onclick="eliminarPolitica('${doc.id}')">Eliminar</button>
+    </div>`;
+  });
+}
+
+async function editarPolitica(id){
+  const doc = await db.collection("politicas").doc(id).get();
+  const d = doc.data();
+
+  document.getElementById("titulo").value = d.titulo;
+  document.getElementById("editor").innerHTML = d.contenido;
+
+  editId = id;
+}
+
+async function eliminarPolitica(id){
+  if(confirm("Eliminar política?")){
+    await db.collection("politicas").doc(id).delete();
+    cargarPoliticas();
+  }
+}
+
+/* ================== LOGOUT ================== */
+function logout(){
+  firebase.auth().signOut().then(()=>{
+    localStorage.clear();
+    window.location.href="login.html";
+  });
+}
+
+/* INIT */
+mostrar("esencias");
+</script>
+
+</body>
+</html>

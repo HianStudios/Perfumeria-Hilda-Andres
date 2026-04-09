@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Login Admin</title>
+
+<style>
+body{
+  background:#111;
+  color:white;
+  font-family:Arial;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.box{
+  background:#1c1c1c;
+  padding:30px;
+  border-radius:10px;
+  width:300px;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border:none;
+  border-radius:5px;
+}
+
+button{
+  width:100%;
+  padding:10px;
+  background:#00c896;
+  border:none;
+  color:white;
+  cursor:pointer;
+}
+
+#error{
+  color:red;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Login</h2>
+  <input type="email" id="email" placeholder="Correo">
+  <input type="password" id="password" placeholder="Contraseña">
+  <button onclick="login()">Entrar</button>
+  <p id="error"></p>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+// CONFIG FIREBASE
+const firebaseConfig = {
+  apiKey: "AIzaSyClkqdEQiTeSdQqjdqbQ4nxTrXbuf9_h-0",
+  authDomain: "perfumeria-app.firebaseapp.com",
+  projectId: "perfumeria-app",
+  storageBucket: "perfumeria-app.firebasestorage.app",
+  messagingSenderId: "24789259966",
+  appId: "1:24789259966:web:4eb977f3009b19a83db0ef"
+};
+
+// INICIALIZAR
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// LOGIN
+async function login(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  try{
+    // 1. Iniciar sesión
+    await auth.signInWithEmailAndPassword(email, password);
+
+    // 2. Buscar usuario en Firestore (ID = email)
+    const doc = await db.collection("usuarios").doc(email).get();
+
+    if (!doc.exists) {
+      document.getElementById("error").innerText = "No tienes permisos";
+      return;
+    }
+
+    const rol = doc.data().rol;
+
+    // 3. Guardar rol
+    localStorage.setItem("rol", rol);
+
+    // 4. Redirigir
+    window.location.href = "admin.html";
+
+  }catch(err){
+    document.getElementById("error").innerText = err.message;
+  }
+}
+</script>
+
+</body>
+</html>
