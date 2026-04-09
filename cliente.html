@@ -43,7 +43,6 @@ body{
   background:#ffffffcc;
   backdrop-filter: blur(10px);
   border-left:1px solid var(--border);
-  overflow-y:auto;
 }
 
 /* TITULOS */
@@ -178,35 +177,6 @@ input:focus{
   font-size:12px;
   color:var(--muted);
 }
-
-/* RESPONSIVE PARA CELULAR */
-@media (max-width:768px) {
-  .container {flex-direction: column;}
-
-  .left {width:100%; padding:16px;}
-  
-  .right {
-    width:100%;
-    position: fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    max-height:45%;
-    padding:14px;
-    border-top:1px solid var(--border);
-    background:#ffffff;
-    overflow-y:auto;
-    z-index:999;
-  }
-
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
-  }
-
-  .card img {height:100px;}
-  .btn, .btn-main, .btn-option, input {font-size:17px; padding:14px;}
-}
 </style>
 </head>
 
@@ -216,7 +186,9 @@ input:focus{
 
 <div class="left">
 
-<button onclick="volver()" class="volver">← Volver a tienda</button>
+<button onclick="volver()" class="volver">
+← Volver a tienda
+</button>
 
 <h2>Selecciona Envase</h2>
 <div class="grid" id="envases"></div>
@@ -268,79 +240,100 @@ let carrito=[];
 
 /* UI */
 function setActiveCard(container,el){
-  document.querySelectorAll('#'+container+' .card').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
+document.querySelectorAll('#'+container+' .card').forEach(c=>c.classList.remove('active'));
+el.classList.add('active');
 }
 
 function setDuracionUI(btn,val){
-  duracion=val;
-  document.querySelectorAll('.btn-option').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+duracion=val;
+document.querySelectorAll('.btn-option').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
 }
 
 /* LOAD */
 async function cargarDatos(){
-  envases.innerHTML="";
-  esencias.innerHTML="";
 
-  let env=await db.collection("envases").get();
-  env.forEach(doc=>{
-    let d=doc.data();
-    envases.innerHTML+=`
-      <div class="card" onclick="envSel(this,${JSON.stringify(d).replace(/"/g,'&quot;')})">
-        <img src="${d.imagen}">
-        <h4>${d.nombre}</h4>
-        <p>${d.categoria}</p>
-        <div class="price">$${d.precio}</div>
-      </div>`;
-  });
+envases.innerHTML="";
+esencias.innerHTML="";
 
-  let es=await db.collection("esencias").get();
-  es.forEach(doc=>{
-    let d=doc.data();
-    esencias.innerHTML+=`
-      <div class="card" onclick="esSel(this,'${d.nombre}')">
-        <img src="${d.imagen}">
-        <h4>${d.nombre}</h4>
-      </div>`;
-  });
+let env=await db.collection("envases").get();
+env.forEach(doc=>{
+let d=doc.data();
+envases.innerHTML+=`
+<div class="card" onclick="envSel(this,${JSON.stringify(d).replace(/"/g,'&quot;')})">
+<img src="${d.imagen}">
+<h4>${d.nombre}</h4>
+<p>${d.categoria}</p>
+<div class="price">$${d.precio}</div>
+</div>`;
+});
+
+let es=await db.collection("esencias").get();
+es.forEach(doc=>{
+let d=doc.data();
+esencias.innerHTML+=`
+<div class="card" onclick="esSel(this,'${d.nombre}')">
+<img src="${d.imagen}">
+<h4>${d.nombre}</h4>
+</div>`;
+});
+
 }
 
 cargarDatos();
 
-function envSel(el,d){envase=d; setActiveCard('envases',el);}
-function esSel(el,n){esencia=n; setActiveCard('esencias',el);}
+function envSel(el,d){envase=d;setActiveCard('envases',el);}
+function esSel(el,n){esencia=n;setActiveCard('esencias',el);}
 
 function calcularPrecio(){
-  if(!envase) return 0;
-  return Number(envase.precio||0)+(duracion==="alta"?2:1);
+if(!envase)return 0;
+return Number(envase.precio||0)+(duracion==="alta"?2:1);
 }
 
 function agregar(){
-  if(!envase||!esencia){alert("Selecciona");return;}
-  let precio=calcularPrecio();
-  carrito.push({envase:envase.nombre, esencia, duracion, precio, cantidad:1});
-  render();
+
+if(!envase||!esencia){alert("Selecciona");return;}
+
+let precio=calcularPrecio();
+
+carrito.push({
+envase:envase.nombre,
+esencia,
+duracion,
+precio,
+cantidad:1
+});
+
+render();
 }
 
 function render(){
-  lista.innerHTML="";
-  let total=0;
-  carrito.forEach(p=>{
-    total+=p.precio;
-    lista.innerHTML+=`
-      <div class="resumen-item">
-        <b>${p.envase}</b> - ${p.esencia}<br>
-        ${p.duracion}<br>
-        <span style="color:#10b981">$${p.precio}</span>
-      </div>`;
-  });
-  totalHTML.innerText="Total: $"+total;
+lista.innerHTML="";
+let total=0;
+
+carrito.forEach(p=>{
+total+=p.precio;
+
+lista.innerHTML+=`
+<div class="resumen-item">
+<b>${p.envase}</b> - ${p.esencia}<br>
+${p.duracion}<br>
+<span style="color:#10b981">$${p.precio}</span>
+</div>`;
+});
+
+totalHTML.innerText="Total: $"+total;
 }
 
 async function confirmar(){
-  if(carrito.length===0){alert("Agrega"); return;}
+
+  if(carrito.length===0){
+    alert("Agrega");
+    return;
+  }
+
   let total = carrito.reduce((a,b)=>a+b.precio,0);
+
   await db.collection("pedidos").add({
     cliente:cliente.value,
     telefono:telefono.value,
@@ -350,9 +343,11 @@ async function confirmar(){
     fecha:new Date().toISOString()
   });
 
+  // Construir mensaje detallado
   let mensaje = `Pedido%0A`;
   mensaje += `Nombre: ${cliente.value}%0A`;
   mensaje += `Numero: ${telefono.value}%0A%0A`;
+
   carrito.forEach(p=>{
     mensaje += `Envase: ${p.envase}%0A`;
     mensaje += `Esencia: ${p.esencia}%0A`;
@@ -360,21 +355,24 @@ async function confirmar(){
     mensaje += `Precio: $${p.precio}%0A`;
     mensaje += `--------------------%0A`;
   });
+
   mensaje += `%0ATotal: $${total}`;
 
   whatsapp.innerHTML = `
-    <a href="https://wa.me/593969518798?text=${mensaje}" target="_blank">
-      <button class="btn btn-main">Enviar por WhatsApp</button>
-    </a>`;
+  <a href="https://wa.me/593969518798?text=${mensaje}" target="_blank">
+    <button class="btn btn-main">Enviar por WhatsApp</button>
+  </a>`;
 }
 
 whatsapp.innerHTML=`
-  <a href="https://wa.me/593969518798?text=Pedido $0" target="_blank">
-    <button class="btn btn-main">Ir a WhatsApp</button>
-  </a>
-`;
+<a href="https://wa.me/593969518798?text=Pedido $${total}" target="_blank">
+<button class="btn btn-main">Ir a WhatsApp</button>
+</a>`;
 
-function volver(){ window.location.href="index.html"; }
+
+function volver(){
+  window.location.href = "index.html";
+}
 </script>
 
 </body>
