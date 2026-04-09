@@ -16,8 +16,11 @@
   --border:#e2e8f0;
 }
 
-/* BASE */
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  transition: all .2s ease;
+}
+
 body{
   margin:0;
   font-family:'Segoe UI',system-ui;
@@ -26,52 +29,80 @@ body{
 }
 
 /* LAYOUT */
-.container{display:flex;}
+.container{
+  display:flex;
+  gap:20px;
+  padding:20px;
+}
 
 .left{
-  width:70%;
-  padding:40px;
+  width:65%;
+  padding:20px;
+  max-height:100vh;
+  overflow-y:auto;
 }
 
 .right{
-  width:30%;
-  position:fixed;
-  right:0;
-  top:0;
-  height:100%;
-  padding:30px;
+  width:35%;
+  position:sticky;
+  top:20px;
+  height:fit-content;
+  padding:20px;
   background:#ffffffcc;
   backdrop-filter: blur(10px);
-  border-left:1px solid var(--border);
+  border:1px solid var(--border);
+  border-radius:16px;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+  .container{
+    flex-direction:column;
+    padding:10px;
+  }
+
+  .left,.right{
+    width:100%;
+    padding:15px;
+  }
+
+  .right{
+    position:relative;
+    top:auto;
+  }
 }
 
 /* TITULOS */
 h2{
   font-weight:600;
-  margin:30px 0 12px;
+  margin:25px 0 10px;
 }
 
 /* GRID */
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
-  gap:18px;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:14px;
+}
+
+@media(max-width:500px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
 
 /* CARD */
 .card{
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:14px;
-  padding:14px;
+  border-radius:16px;
+  padding:12px;
   cursor:pointer;
-  transition:.25s;
-  position:relative;
 }
 
 .card:hover{
-  transform:translateY(-5px);
-  box-shadow:0 10px 25px rgba(0,0,0,.08);
+  transform:translateY(-4px) scale(1.01);
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
 }
 
 .card.active{
@@ -81,26 +112,29 @@ h2{
 
 .card img{
   width:100%;
-  height:140px;
+  height:130px;
   object-fit:cover;
-  border-radius:10px;
+  border-radius:12px;
 }
 
 .card h4{
-  margin:10px 0 5px;
+  font-size:14px;
+  margin:8px 0 4px;
 }
 
 .price{
+  font-size:14px;
   color:var(--accent);
   font-weight:600;
 }
 
 /* BOTONES */
 .btn{
-  padding:13px;
-  border-radius:10px;
+  padding:12px;
+  border-radius:12px;
   border:none;
   cursor:pointer;
+  font-size:14px;
 }
 
 .btn-main{
@@ -108,11 +142,7 @@ h2{
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:white;
   font-weight:600;
-  box-shadow:0 8px 20px rgba(16,185,129,.2);
-}
-
-.btn-main:hover{
-  transform:translateY(-2px);
+  box-shadow:0 6px 16px rgba(16,185,129,.2);
 }
 
 .btn-option{
@@ -120,6 +150,7 @@ h2{
   border:1px solid var(--border);
   color:#0f172a;
   margin-right:10px;
+  border-radius:999px;
 }
 
 .btn-option.active{
@@ -130,12 +161,11 @@ h2{
 /* INPUT */
 input{
   width:100%;
-  padding:14px;
-  border-radius:10px;
+  padding:13px;
+  border-radius:12px;
   border:1px solid var(--border);
-  background:white;
-  color:#0f172a;
-  margin:8px 0;
+  margin:6px 0;
+  font-size:14px;
 }
 
 input:focus{
@@ -147,18 +177,19 @@ input:focus{
 .resumen-item{
   background:#f8fafc;
   border:1px solid var(--border);
-  padding:12px;
-  border-radius:10px;
-  margin-bottom:10px;
+  padding:10px;
+  border-radius:12px;
+  margin-bottom:8px;
+  font-size:13px;
 }
 
 .total{
-  font-size:24px;
+  font-size:22px;
   font-weight:700;
   color:var(--accent);
 }
 
-/* BOTON VOLVER */
+/* VOLVER */
 .volver{
   margin-bottom:20px;
   padding:10px 18px;
@@ -168,11 +199,7 @@ input:focus{
   cursor:pointer;
 }
 
-.volver:hover{
-  background:#f1f5f9;
-}
-
-/* NOTA */
+/* NOTE */
 .note{
   font-size:12px;
   color:var(--muted);
@@ -197,8 +224,10 @@ input:focus{
 <div class="grid" id="esencias"></div>
 
 <h2>Duración</h2>
+<div style="display:flex;gap:10px;margin-bottom:10px;">
 <button class="btn btn-option" onclick="setDuracionUI(this,'moderada')">Moderada</button>
 <button class="btn btn-option" onclick="setDuracionUI(this,'alta')">Alta</button>
+</div>
 
 <h2>Datos</h2>
 <input id="cliente" placeholder="Tu nombre">
@@ -238,7 +267,6 @@ let esencia=null;
 let duracion="moderada";
 let carrito=[];
 
-/* UI */
 function setActiveCard(container,el){
 document.querySelectorAll('#'+container+' .card').forEach(c=>c.classList.remove('active'));
 el.classList.add('active');
@@ -250,7 +278,6 @@ document.querySelectorAll('.btn-option').forEach(b=>b.classList.remove('active')
 btn.classList.add('active');
 }
 
-/* LOAD */
 async function cargarDatos(){
 
 envases.innerHTML="";
@@ -327,51 +354,38 @@ totalHTML.innerText="Total: $"+total;
 
 async function confirmar(){
 
-  if(carrito.length===0){
-    alert("Agrega");
-    return;
-  }
+if(carrito.length===0){alert("Agrega");return;}
+if(!cliente.value || !telefono.value){alert("Completa tus datos");return;}
 
-  let total = carrito.reduce((a,b)=>a+b.precio,0);
+let total = carrito.reduce((a,b)=>a+b.precio,0);
 
-  await db.collection("pedidos").add({
-    cliente:cliente.value,
-    telefono:telefono.value,
-    carrito,
-    total,
-    estado:"pendiente",
-    fecha:new Date().toISOString()
-  });
+await db.collection("pedidos").add({
+cliente:cliente.value,
+telefono:telefono.value,
+carrito,
+total,
+estado:"pendiente",
+fecha:new Date().toISOString()
+});
 
-  // Construir mensaje detallado
-  let mensaje = `Pedido%0A`;
-  mensaje += `Nombre: ${cliente.value}%0A`;
-  mensaje += `Numero: ${telefono.value}%0A%0A`;
+let mensaje = `Pedido\nNombre: ${cliente.value}\nNumero: ${telefono.value}\n\n`;
 
-  carrito.forEach(p=>{
-    mensaje += `Envase: ${p.envase}%0A`;
-    mensaje += `Esencia: ${p.esencia}%0A`;
-    mensaje += `Duración: ${p.duracion}%0A`;
-    mensaje += `Precio: $${p.precio}%0A`;
-    mensaje += `--------------------%0A`;
-  });
+carrito.forEach(p=>{
+mensaje += `Envase: ${p.envase}\nEsencia: ${p.esencia}\nDuración: ${p.duracion}\nPrecio: $${p.precio}\n--------------------\n`;
+});
 
-  mensaje += `%0ATotal: $${total}`;
+mensaje += `\nTotal: $${total}`;
 
-  whatsapp.innerHTML = `
-  <a href="https://wa.me/593969518798?text=${mensaje}" target="_blank">
-    <button class="btn btn-main">Enviar por WhatsApp</button>
-  </a>`;
+let url = "https://wa.me/593969518798?text=" + encodeURIComponent(mensaje);
+
+whatsapp.innerHTML = `
+<a href="${url}" target="_blank">
+<button class="btn btn-main">Enviar por WhatsApp</button>
+</a>`;
 }
 
-whatsapp.innerHTML=`
-<a href="https://wa.me/593969518798?text=Pedido $${total}" target="_blank">
-<button class="btn btn-main">Ir a WhatsApp</button>
-</a>`;
-
-
 function volver(){
-  window.location.href = "index.html";
+window.location.href="index.html";
 }
 </script>
 
